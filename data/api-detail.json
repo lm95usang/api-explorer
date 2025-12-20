@@ -1,0 +1,440 @@
+{
+    "EBP_API_104": {
+        "id": "EBP_API_104",
+        "name": "회원 탈퇴",
+        "description": "빌링 계정 사용자의 회원탈퇴",
+        "method": "POST",
+        "path": "/ebp/v2/account/withdrawal",
+        "pathParameters": [],
+        "queryParameters": [],
+        "bodyParameters": [
+            {
+                "name": "billing",
+                "type": "object",
+                "required": false,
+                "description": "빌링 정보 객체",
+                "children": [
+                    {
+                        "name": "userNo",
+                        "type": "String",
+                        "required": true,
+                        "description": "사용자 번호",
+                        "maxLength": 50,
+                        "defaultValue": "API_EXPLORER_TEST_USER"
+                    }
+                ]
+            }
+        ]
+    },
+    "EBP_API_201": {
+        "id": "EBP_API_201",
+        "name": "결제 승인",
+        "description": "결제 승인 요청을 처리합니다.",
+        "method": "POST",
+        "path": "/ebp/v2/payment/approve",
+        "pathParameters": [],
+        "queryParameters": [],
+        "bodyParameters": [
+            {
+                "name": "payment",
+                "type": "object",
+                "required": false,
+                "description": "결제 정보 객체",
+                "children": [
+                    {
+                        "name": "orderId",
+                        "type": "String",
+                        "required": true,
+                        "description": "주문 번호",
+                        "maxLength": 100,
+                        "defaultValue": "ORDER_20231220_001"
+                    },
+                    {
+                        "name": "amount",
+                        "type": "Number",
+                        "required": true,
+                        "description": "결제 금액",
+                        "defaultValue": "10000"
+                    },
+                    {
+                        "name": "paymentMethod",
+                        "type": "String",
+                        "required": true,
+                        "description": "결제 수단 (CARD, BANK, PHONE)",
+                        "defaultValue": "CARD"
+                    }
+                ]
+            },
+            {
+                "name": "customer",
+                "type": "object",
+                "required": false,
+                "description": "고객 정보 객체",
+                "children": [
+                    {
+                        "name": "customerId",
+                        "type": "String",
+                        "required": true,
+                        "description": "고객 ID",
+                        "maxLength": 50,
+                        "defaultValue": "CUST_001"
+                    },
+                    {
+                        "name": "customerName",
+                        "type": "String",
+                        "required": false,
+                        "description": "고객명",
+                        "maxLength": 100,
+                        "defaultValue": "홍길동"
+                    }
+                ]
+            }
+        ]
+    },
+    "EBP_API_202": {
+        "id": "EBP_API_202",
+        "name": "결제 취소",
+        "description": "승인된 결제를 취소합니다.",
+        "method": "POST",
+        "path": "/ebp/v2/payment/cancel",
+        "pathParameters": [],
+        "queryParameters": [],
+        "bodyParameters": [
+            {
+                "name": "cancel",
+                "type": "object",
+                "required": false,
+                "description": "취소 정보 객체",
+                "children": [
+                    {
+                        "name": "transactionId",
+                        "type": "String",
+                        "required": true,
+                        "description": "거래 번호",
+                        "maxLength": 100,
+                        "defaultValue": "TXN_20231220_001"
+                    },
+                    {
+                        "name": "cancelAmount",
+                        "type": "Number",
+                        "required": true,
+                        "description": "취소 금액",
+                        "defaultValue": "10000"
+                    },
+                    {
+                        "name": "cancelReason",
+                        "type": "String",
+                        "required": false,
+                        "description": "취소 사유",
+                        "maxLength": 500,
+                        "defaultValue": "고객 요청"
+                    }
+                ]
+            }
+        ]
+    },
+    "EBP_API_203": {
+        "id": "EBP_API_203",
+        "name": "결제 조회",
+        "description": "결제 내역을 조회합니다.",
+        "method": "GET",
+        "path": "/ebp/v2/payment/{transactionId}",
+        "pathParameters": [
+            {
+                "name": "transactionId",
+                "type": "String",
+                "required": true,
+                "description": "거래 번호",
+                "defaultValue": "TXN_20231220_001"
+            }
+        ],
+        "queryParameters": [
+            {
+                "name": "includeDetails",
+                "type": "Boolean",
+                "required": false,
+                "description": "상세 정보 포함 여부",
+                "defaultValue": "true"
+            },
+            {
+                "name": "format",
+                "type": "String",
+                "required": false,
+                "description": "응답 형식 (json, xml)",
+                "defaultValue": "json"
+            }
+        ],
+        "bodyParameters": []
+    },
+    "EBP_API_230": {
+        "id": "EBP_API_230",
+        "name": "토큰 발급",
+        "description": "결제용 토큰을 발급합니다.",
+        "method": "POST",
+        "path": "/ebp/v2/token/issue",
+        "pathParameters": [],
+        "queryParameters": [],
+        "bodyParameters": [
+            {
+                "name": "token",
+                "type": "object",
+                "required": false,
+                "description": "토큰 발급 정보",
+                "children": [
+                    {
+                        "name": "cardNumber",
+                        "type": "String",
+                        "required": true,
+                        "description": "카드 번호",
+                        "maxLength": 16,
+                        "defaultValue": "4111111111111111"
+                    },
+                    {
+                        "name": "expiryDate",
+                        "type": "String",
+                        "required": true,
+                        "description": "만료일 (MMYY)",
+                        "maxLength": 4,
+                        "defaultValue": "1225"
+                    },
+                    {
+                        "name": "cvv",
+                        "type": "String",
+                        "required": true,
+                        "description": "CVV",
+                        "maxLength": 3,
+                        "defaultValue": "123"
+                    }
+                ]
+            }
+        ]
+    },
+    "EBP_API_301": {
+        "id": "EBP_API_301",
+        "name": "정기결제 등록",
+        "description": "정기결제를 등록합니다.",
+        "method": "POST",
+        "path": "/ebp/v2/subscription/register",
+        "pathParameters": [],
+        "queryParameters": [],
+        "bodyParameters": [
+            {
+                "name": "subscription",
+                "type": "object",
+                "required": false,
+                "description": "정기결제 정보",
+                "children": [
+                    {
+                        "name": "planId",
+                        "type": "String",
+                        "required": true,
+                        "description": "플랜 ID",
+                        "maxLength": 50,
+                        "defaultValue": "PLAN_MONTHLY_001"
+                    },
+                    {
+                        "name": "customerId",
+                        "type": "String",
+                        "required": true,
+                        "description": "고객 ID",
+                        "maxLength": 50,
+                        "defaultValue": "CUST_001"
+                    },
+                    {
+                        "name": "billingCycle",
+                        "type": "String",
+                        "required": true,
+                        "description": "결제 주기 (MONTHLY, YEARLY)",
+                        "defaultValue": "MONTHLY"
+                    }
+                ]
+            }
+        ]
+    },
+    "EBP_API_302": {
+        "id": "EBP_API_302",
+        "name": "정기결제 해지",
+        "description": "정기결제를 해지합니다.",
+        "method": "POST",
+        "path": "/ebp/v2/subscription/cancel",
+        "pathParameters": [],
+        "queryParameters": [],
+        "bodyParameters": [
+            {
+                "name": "subscription",
+                "type": "object",
+                "required": false,
+                "description": "정기결제 해지 정보",
+                "children": [
+                    {
+                        "name": "subscriptionId",
+                        "type": "String",
+                        "required": true,
+                        "description": "정기결제 ID",
+                        "maxLength": 50,
+                        "defaultValue": "SUB_001"
+                    },
+                    {
+                        "name": "cancelReason",
+                        "type": "String",
+                        "required": false,
+                        "description": "해지 사유",
+                        "maxLength": 500,
+                        "defaultValue": "고객 요청"
+                    }
+                ]
+            }
+        ]
+    },
+    "EBP_API_401": {
+        "id": "EBP_API_401",
+        "name": "복합 결제 요청",
+        "description": "여러 상품을 한 번에 결제하는 복합 결제 요청입니다.",
+        "method": "POST",
+        "path": "/ebp/v2/payment/complex",
+        "pathParameters": [],
+        "queryParameters": [],
+        "bodyParameters": [
+            {
+                "name": "order",
+                "type": "object",
+                "required": true,
+                "description": "주문 정보",
+                "children": [
+                    {
+                        "name": "orderId",
+                        "type": "String",
+                        "required": true,
+                        "description": "주문 번호",
+                        "maxLength": 100,
+                        "defaultValue": "ORDER_COMPLEX_001"
+                    },
+                    {
+                        "name": "orderName",
+                        "type": "String",
+                        "required": true,
+                        "description": "주문명",
+                        "maxLength": 200,
+                        "defaultValue": "복합 상품 주문"
+                    }
+                ]
+            },
+            {
+                "name": "items",
+                "type": "array",
+                "required": true,
+                "description": "결제 상품 목록 (객체 배열)",
+                "itemType": "object",
+                "children": [
+                    {
+                        "name": "productId",
+                        "type": "String",
+                        "required": true,
+                        "description": "상품 ID",
+                        "maxLength": 50,
+                        "defaultValue": "PROD_001"
+                    },
+                    {
+                        "name": "productName",
+                        "type": "String",
+                        "required": true,
+                        "description": "상품명",
+                        "maxLength": 200,
+                        "defaultValue": "테스트 상품"
+                    },
+                    {
+                        "name": "quantity",
+                        "type": "Number",
+                        "required": true,
+                        "description": "수량",
+                        "defaultValue": "1"
+                    },
+                    {
+                        "name": "unitPrice",
+                        "type": "Number",
+                        "required": true,
+                        "description": "단가",
+                        "defaultValue": "10000"
+                    },
+                    {
+                        "name": "discountAmount",
+                        "type": "Number",
+                        "required": false,
+                        "description": "할인 금액",
+                        "defaultValue": "0"
+                    }
+                ],
+                "defaultValue": [
+                    {
+                        "productId": "PROD_001",
+                        "productName": "프리미엄 멤버십",
+                        "quantity": 1,
+                        "unitPrice": 29000,
+                        "discountAmount": 0
+                    },
+                    {
+                        "productId": "PROD_002",
+                        "productName": "추가 저장공간 100GB",
+                        "quantity": 2,
+                        "unitPrice": 5000,
+                        "discountAmount": 1000
+                    }
+                ]
+            },
+            {
+                "name": "payment",
+                "type": "object",
+                "required": true,
+                "description": "결제 정보",
+                "children": [
+                    {
+                        "name": "method",
+                        "type": "String",
+                        "required": true,
+                        "description": "결제 수단 (CARD, BANK, PHONE, POINT)",
+                        "defaultValue": "CARD"
+                    },
+                    {
+                        "name": "totalAmount",
+                        "type": "Number",
+                        "required": true,
+                        "description": "총 결제 금액",
+                        "defaultValue": "38000"
+                    }
+                ]
+            },
+            {
+                "name": "customer",
+                "type": "object",
+                "required": false,
+                "description": "고객 정보",
+                "children": [
+                    {
+                        "name": "customerId",
+                        "type": "String",
+                        "required": true,
+                        "description": "고객 ID",
+                        "maxLength": 50,
+                        "defaultValue": "CUST_001"
+                    },
+                    {
+                        "name": "customerName",
+                        "type": "String",
+                        "required": false,
+                        "description": "고객명",
+                        "maxLength": 100,
+                        "defaultValue": "홍길동"
+                    },
+                    {
+                        "name": "email",
+                        "type": "String",
+                        "required": false,
+                        "description": "이메일",
+                        "maxLength": 200,
+                        "defaultValue": "hong@example.com"
+                    }
+                ]
+            }
+        ]
+    }
+}

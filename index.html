@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EBP V2 - API Explorer</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left Panel - API Info & Parameters -->
+            <div class="col-lg-6 left-panel">
+                <div class="header-section">
+                    <h1 class="title">EBP V2</h1>
+                    <div class="d-flex align-items-center gap-3 mt-4">
+                        <div class="api-select-wrapper flex-grow-1">
+                            <select id="apiSelect" class="form-select api-select">
+                                <option value="">API를 선택하세요</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="apiDetailSection" class="api-detail-section" style="display: none;">
+                    <div class="api-title-section">
+                        <h2 id="apiTitle" class="api-title"></h2>
+                        <p id="apiDescription" class="api-description"></p>
+                        <div class="api-endpoint">
+                            <span id="apiMethod" class="method-badge"></span>
+                            <span id="apiPath" class="api-path"></span>
+                        </div>
+                    </div>
+
+                    <!-- Path Parameters Section -->
+                    <div id="pathParametersSection" class="parameters-section" style="display: none;">
+                        <h3 class="section-title">Path Parameters</h3>
+                        <form id="pathParameterForm">
+                            <!-- Path parameters will be dynamically added here -->
+                        </form>
+                    </div>
+
+                    <!-- Query Parameters Section -->
+                    <div id="queryParametersSection" class="parameters-section" style="display: none;">
+                        <h3 class="section-title">Query Parameters</h3>
+                        <form id="queryParameterForm">
+                            <!-- Query parameters will be dynamically added here -->
+                        </form>
+                    </div>
+
+                    <!-- Body Parameters Section -->
+                    <div id="bodyParametersSection" class="parameters-section" style="display: none;">
+                        <h3 class="section-title">Body Parameters</h3>
+
+                        <div class="view-toggle">
+                            <button type="button" class="view-btn active" data-view="form">Form view</button>
+                            <button type="button" class="view-btn" data-view="code">Code view</button>
+                        </div>
+
+                        <!-- Form View -->
+                        <div id="formView" class="parameter-view">
+                            <form id="parameterForm">
+                                <!-- Body parameters will be dynamically added here -->
+                            </form>
+                        </div>
+
+                        <!-- Code View -->
+                        <div id="codeView" class="parameter-view" style="display: none;">
+                            <div class="code-view-header">
+                                <span>Code View</span>
+                            </div>
+                            <div class="code-editor-wrapper">
+                                <div class="line-numbers" id="lineNumbers"></div>
+                                <textarea id="codeEditor" class="code-editor" spellcheck="false"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel - RIC Selector, Request & Response -->
+            <div class="col-lg-6 right-panel">
+                <div class="ric-selector-section">
+                    <div class="ric-tabs">
+                        <button type="button" class="ric-tab active" data-ric="KIC">KIC</button>
+                        <button type="button" class="ric-tab" data-ric="AIC">AIC</button>
+                        <button type="button" class="ric-tab" data-ric="EIC">EIC</button>
+                    </div>
+                    <button type="button" class="header-info-btn" id="headerInfoBtn">
+                        HeaderInfo
+                    </button>
+                </div>
+
+                <!-- Request Section -->
+                <div id="requestSection" class="request-section">
+                    <div class="request-header">
+                        <div class="request-title">
+                            <span id="requestMethod" class="method-badge-sm"></span>
+                            <span id="requestPath" class="request-path"></span>
+                        </div>
+                        <button type="button" class="copy-btn" id="copyRequestBtn">Copy</button>
+                    </div>
+                    <div class="request-body">
+                        <pre id="curlCommand" class="curl-command"><span class="placeholder-text">API를 선택하면 요청 정보가 표시됩니다.</span></pre>
+                    </div>
+                    <button type="button" class="run-btn" id="runBtn" disabled>RUN</button>
+                </div>
+
+                <!-- Response Section -->
+                <div id="responseSection" class="response-section">
+                    <div class="response-header">
+                        <span>Response</span>
+                        <span id="responseStatus" class="response-status"></span>
+                    </div>
+                    <div class="response-body">
+                        <pre id="responseContent" class="response-content"><span class="placeholder-text">RUN 버튼을 클릭하면 응답 결과가 표시됩니다.</span></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header Info Modal -->
+    <div class="modal fade" id="headerInfoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content header-modal">
+                <div class="modal-header">
+                    <div class="modal-title-wrapper">
+                        <i class="bi bi-gear-fill"></i>
+                        <h5 class="modal-title">Request Headers</h5>
+                    </div>
+                    <div class="modal-header-actions">
+                        <button type="button" class="btn-reset-headers" id="resetHeadersBtn">
+                            <i class="bi bi-arrow-counterclockwise"></i> Reset
+                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="header-info-description">
+                        <i class="bi bi-info-circle"></i>
+                        <span>API 요청 시 사용되는 헤더값을 수정할 수 있습니다. 변경사항은 실시간으로 반영됩니다.</span>
+                    </div>
+                    <div id="headerInfoContent" class="header-info-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Parameter Tooltip Template -->
+    <div id="paramTooltip" class="param-tooltip" style="display: none;">
+        <div class="tooltip-content">
+            <div class="tooltip-title"></div>
+            <div class="tooltip-type"></div>
+            <div class="tooltip-desc"></div>
+            <div class="tooltip-constraints"></div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Custom JS -->
+    <script src="js/config.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

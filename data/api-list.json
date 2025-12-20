@@ -1,0 +1,44 @@
+{
+    "apis": [
+        {
+            "id": "EBP_API_104",
+            "name": "회원 탈퇴",
+            "category": "토큰결제 (EBP_API_230)"
+        },
+        {
+            "id": "EBP_API_201",
+            "name": "결제 승인",
+            "category": "토큰결제 (EBP_API_230)"
+        },
+        {
+            "id": "EBP_API_202",
+            "name": "결제 취소",
+            "category": "토큰결제 (EBP_API_230)"
+        },
+        {
+            "id": "EBP_API_203",
+            "name": "결제 조회",
+            "category": "토큰결제 (EBP_API_230)"
+        },
+        {
+            "id": "EBP_API_230",
+            "name": "토큰 발급",
+            "category": "토큰결제 (EBP_API_230)"
+        },
+        {
+            "id": "EBP_API_301",
+            "name": "정기결제 등록",
+            "category": "정기결제"
+        },
+        {
+            "id": "EBP_API_302",
+            "name": "정기결제 해지",
+            "category": "정기결제"
+        },
+        {
+            "id": "EBP_API_401",
+            "name": "복합 결제 요청",
+            "category": "복합결제"
+        }
+    ]
+}
