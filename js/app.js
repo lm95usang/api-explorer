@@ -9,10 +9,30 @@ $(document).ready(function() {
 /**
  * 초기화
  */
-function init() {
+async function init() {
+    // RIC 설정 먼저 로드
+    await loadRicConfig();
+
+    // RIC 탭 동적 렌더링
+    renderRicTabs();
+
     loadApiList();
     bindEvents();
     updateHeaderInfo();
+}
+
+/**
+ * RIC 탭 동적 렌더링
+ */
+function renderRicTabs() {
+    const $ricTabs = $('.ric-tabs');
+    $ricTabs.empty();
+
+    Object.keys(CONFIG.RIC).forEach(ricCode => {
+        const isActive = ricCode === currentRic ? 'active' : '';
+        const $tab = $(`<button type="button" class="ric-tab ${isActive}" data-ric="${ricCode}">${ricCode}</button>`);
+        $ricTabs.append($tab);
+    });
 }
 
 /**
@@ -264,7 +284,8 @@ function getDemoApiDetail(apiId) {
                             name: 'paymentMethod',
                             type: 'String',
                             required: true,
-                            description: '결제 수단 (CARD, BANK, PHONE)',
+                            description: '결제 수단',
+                            enum: ['CARD', 'BANK', 'PHONE'],
                             defaultValue: 'CARD'
                         }
                     ]
@@ -448,7 +469,8 @@ function getDemoApiDetail(apiId) {
                             name: 'billingCycle',
                             type: 'String',
                             required: true,
-                            description: '결제 주기 (MONTHLY, YEARLY)',
+                            description: '결제 주기',
+                            enum: ['MONTHLY', 'YEARLY'],
                             defaultValue: 'MONTHLY'
                         }
                     ]
@@ -551,7 +573,8 @@ function getDemoApiDetail(apiId) {
                             name: 'method',
                             type: 'String',
                             required: true,
-                            description: '결제 수단 (CARD, BANK, PHONE, POINT)',
+                            description: '결제 수단',
+                            enum: ['CARD', 'BANK', 'PHONE', 'POINT'],
                             defaultValue: 'CARD'
                         },
                         {
@@ -672,18 +695,32 @@ function renderParameterForm(api) {
     if (api.bodyParameters && api.bodyParameters.length > 0) {
         api.bodyParameters.forEach(param => {
             if (param.type === 'object' && param.children) {
-                // 중첩 객체 처리
+                // 중첩 객체 처리 - wrapper 객체로 감싸서 렌더링
                 const $group = $('<div class="param-group">');
-
-                // 중첩 파라미터 렌더링
                 const $nested = $('<div class="nested-params">');
-                $nested.append(`<span class="nested-label">"${param.name}": {</span>`);
 
+                // 객체 라벨
+                const $labelWrapper = $('<div class="param-label-wrapper">');
+                if (param.required) {
+                    $labelWrapper.append('<span class="param-required">*</span>');
+                }
+                $labelWrapper.append(`<span class="param-label">${param.name}</span>`);
+                $labelWrapper.append(`<span class="param-type">Object</span>`);
+
+                // description 표시
+                if (param.description) {
+                    $labelWrapper.append(`<span class="param-description">${param.description}</span>`);
+                }
+
+                $nested.append($labelWrapper);
+
+                // children 렌더링
+                const $childrenContainer = $('<div class="object-children-container">')
+                    .attr('data-object-name', param.name);
                 param.children.forEach(child => {
-                    $nested.append(createParameterInput(child, param.name));
+                    $childrenContainer.append(createParameterInput(child, param.name));
                 });
-
-                $nested.append('<span class="nested-label">}</span>');
+                $nested.append($childrenContainer);
                 $group.append($nested);
                 $bodyForm.append($group);
             } else if (param.type === 'array' && param.children) {
@@ -699,14 +736,12 @@ function renderParameterForm(api) {
                 $labelWrapper.append(`<span class="param-label">${param.name}</span>`);
                 $labelWrapper.append(`<span class="param-type">Array&lt;Object&gt;</span>`);
 
-                // 정보 버튼
-                const $infoBtn = $('<button type="button" class="param-info-btn">')
-                    .html('<i class="bi bi-question-circle"></i>')
-                    .data('paramInfo', param);
-                $labelWrapper.append($infoBtn);
+                // description 표시
+                if (param.description) {
+                    $labelWrapper.append(`<span class="param-description">${param.description}</span>`);
+                }
 
                 $nested.append($labelWrapper);
-                $nested.append(`<span class="nested-label">"${param.name}": [</span>`);
 
                 // 배열 아이템 컨테이너
                 const $arrayItemsContainer = $('<div class="array-items-container">')
@@ -728,7 +763,6 @@ function renderParameterForm(api) {
                     .data('paramSchema', param);
 
                 $nested.append($addBtn);
-                $nested.append('<span class="nested-label">]</span>');
 
                 $group.append($nested);
                 $bodyForm.append($group);
@@ -759,7 +793,13 @@ function createParameterInput(param, parentName) {
     $labelWrapper.append(`<span class="param-type">${param.type}</span>`);
 
     if (param.maxLength) {
-        $labelWrapper.append(`<span class="param-constraint">, max size : ${param.maxLength}</span>`);
+        $labelWrapper.append(`<span class="param-constraint">max: ${param.maxLength}</span>`);
+    }
+
+    // enum 허용값 표시
+    if (param.enum && param.enum.length > 0) {
+        const enumText = formatEnumDisplay(param.enum);
+        $labelWrapper.append(`<span class="param-enum">${enumText}</span>`);
     }
 
     $group.append($labelWrapper);
@@ -827,7 +867,12 @@ function createArrayItemForm(param, index, itemData) {
         $labelWrapper.append(`<span class="param-label">${child.name}</span>`);
         $labelWrapper.append(`<span class="param-type">${child.type}</span>`);
         if (child.maxLength) {
-            $labelWrapper.append(`<span class="param-constraint">, max: ${child.maxLength}</span>`);
+            $labelWrapper.append(`<span class="param-constraint">max: ${child.maxLength}</span>`);
+        }
+        // enum 허용값 표시
+        if (child.enum && child.enum.length > 0) {
+            const enumText = formatEnumDisplay(child.enum);
+            $labelWrapper.append(`<span class="param-enum">${enumText}</span>`);
         }
         $fieldGroup.append($labelWrapper);
 
@@ -955,32 +1000,34 @@ function updateCodeEditor() {
 function buildRequestBodyFromForm() {
     const result = {};
 
-    // 일반 입력 필드 처리 (배열 아이템 제외)
-    $('#parameterForm .param-input:not(.array-item-input)').each(function() {
-        const $input = $(this);
-        const name = $input.attr('name');
-        const parent = $input.attr('data-parent');
-        const type = $input.attr('data-type');
-        let value = $input.val();
+    // 객체 컨테이너 처리
+    $('.object-children-container').each(function() {
+        const $container = $(this);
+        const objectName = $container.attr('data-object-name');
+        const objectData = {};
 
-        // 빈 값 처리
-        if (value === '') return;
+        $container.find('.param-input:not(.array-item-input)').each(function() {
+            const $input = $(this);
+            const name = $input.attr('name');
+            const type = $input.attr('data-type');
+            let value = $input.val();
 
-        // 타입 변환
-        if (type === 'Number') {
-            value = Number(value);
-        } else if (type === 'Boolean') {
-            value = value.toLowerCase() === 'true';
-        }
+            // 빈 값 처리
+            if (value === '') return;
 
-        // 중첩 구조 처리
-        if (parent && parent !== 'body' && parent !== 'path') {
-            if (!result[parent]) {
-                result[parent] = {};
+            // 타입 변환
+            if (type === 'Number') {
+                value = Number(value);
+            } else if (type === 'Boolean') {
+                value = value.toLowerCase() === 'true';
             }
-            result[parent][name] = value;
-        } else if (parent !== 'path') {
-            result[name] = value;
+
+            objectData[name] = value;
+        });
+
+        // 객체에 데이터가 있으면 결과에 추가
+        if (Object.keys(objectData).length > 0) {
+            result[objectName] = objectData;
         }
     });
 
@@ -1149,29 +1196,20 @@ function syncCodeToForm() {
     try {
         const jsonData = JSON.parse($('#codeEditor').val());
 
-        // 일반 입력 필드에 값 설정 (배열 아이템 제외)
-        $('#parameterForm .param-input:not(.array-item-input)').each(function() {
-            const $input = $(this);
-            const name = $input.attr('name');
-            const parent = $input.attr('data-parent');
+        // 객체 컨테이너 내 입력 필드에 값 설정
+        $('.object-children-container').each(function() {
+            const $container = $(this);
+            const objectName = $container.attr('data-object-name');
+            const objectData = jsonData[objectName] || {};
 
-            let value = '';
+            $container.find('.param-input:not(.array-item-input)').each(function() {
+                const $input = $(this);
+                const name = $input.attr('name');
 
-            if (parent && parent !== 'body' && parent !== 'path') {
-                // 중첩 객체인 경우
-                if (jsonData[parent] && jsonData[parent][name] !== undefined) {
-                    value = jsonData[parent][name];
+                if (objectData[name] !== undefined && objectData[name] !== null) {
+                    $input.val(objectData[name].toString());
                 }
-            } else if (parent !== 'path') {
-                // 루트 레벨
-                if (jsonData[name] !== undefined) {
-                    value = jsonData[name];
-                }
-            }
-
-            if (value !== undefined && value !== null) {
-                $input.val(value.toString());
-            }
+            });
         });
 
         // 배열 데이터 동기화
@@ -1424,13 +1462,20 @@ function executeApi() {
         return;
     }
 
-    // AJAX 요청
-    $.ajax({
-        url: fullUrl,
+    // API Router를 통한 요청 (CORS 우회)
+    // Router에 전달할 요청 정보 구성
+    const routerRequest = {
+        targetUrl: fullUrl,
         method: currentApi.method,
         headers: ricConfig.headers,
+        body: bodyData
+    };
+
+    $.ajax({
+        url: CONFIG.apiRouterEndpoint,
+        method: 'POST',
         contentType: 'application/json; charset=utf-8',
-        data: bodyData ? JSON.stringify(bodyData) : null,
+        data: JSON.stringify(routerRequest),
         success: function(response, status, xhr) {
             renderResponse(xhr.status, response);
         },
@@ -1744,22 +1789,36 @@ function showParamTooltip(e) {
 
     const $tooltip = $('#paramTooltip');
 
-    // 툴팁 내용 설정
+    // 툴팁 내용 설정 - 이미 Form view에서 보여지는 정보는 제외
+    // (이름, 타입, 필수여부, max size는 이미 라벨에 표시됨)
     $tooltip.find('.tooltip-title').text(paramInfo.name);
-    $tooltip.find('.tooltip-type').text(paramInfo.type + (paramInfo.required ? ' (필수)' : ' (선택)'));
+    $tooltip.find('.tooltip-type').text(''); // 타입/필수 정보는 이미 표시되어 있으므로 제거
     $tooltip.find('.tooltip-desc').text(paramInfo.description || '');
 
+    // maxLength는 이미 Form view에 표시되므로 제외, 나머지 제약조건만 표시
     let constraints = '';
-    if (paramInfo.maxLength) {
-        constraints += `<span>최대 길이: ${paramInfo.maxLength}</span>`;
-    }
     if (paramInfo.minLength) {
         constraints += `<span>최소 길이: ${paramInfo.minLength}</span>`;
     }
     if (paramInfo.pattern) {
         constraints += `<span>패턴: ${paramInfo.pattern}</span>`;
     }
+    if (paramInfo.minValue !== undefined) {
+        constraints += `<span>최소값: ${paramInfo.minValue}</span>`;
+    }
+    if (paramInfo.maxValue !== undefined) {
+        constraints += `<span>최대값: ${paramInfo.maxValue}</span>`;
+    }
+    if (paramInfo.enum) {
+        constraints += `<span>허용값: ${formatEnumDisplay(paramInfo.enum)}</span>`;
+    }
     $tooltip.find('.tooltip-constraints').html(constraints);
+
+    // 표시할 내용이 없으면 툴팁 숨기기
+    const hasContent = paramInfo.description || constraints;
+    if (!hasContent) {
+        return;
+    }
 
     // 위치 계산
     const btnOffset = $btn.offset();
@@ -1793,4 +1852,22 @@ function showLoading() {
  */
 function hideLoading() {
     $('.loading-overlay').hide();
+}
+
+/**
+ * enum 배열을 표시용 문자열로 변환
+ * @param {Array} enumArray - enum 배열 (문자열 배열 또는 {code, label} 객체 배열)
+ * @returns {string} 표시용 문자열
+ */
+function formatEnumDisplay(enumArray) {
+    if (!enumArray || enumArray.length === 0) return '';
+
+    // 첫 번째 요소로 형태 판단
+    if (typeof enumArray[0] === 'object' && enumArray[0].code !== undefined) {
+        // {code, label} 형태
+        return enumArray.map(item => `${item.code}(${item.label})`).join(' | ');
+    } else {
+        // 단순 문자열 배열 형태 (하위 호환)
+        return enumArray.join(' | ');
+    }
 }

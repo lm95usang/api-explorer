@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,13 +12,14 @@
     <!-- Custom CSS -->
     <link href="css/style.css" rel="stylesheet">
 </head>
+
 <body>
     <div class="container-fluid">
         <div class="row">
             <!-- Left Panel - API Info & Parameters -->
             <div class="col-lg-6 left-panel">
                 <div class="header-section">
-                    <h1 class="title">EBP V2</h1>
+                    <h1 class="title">EBP API Explorer V2</h1>
                     <div class="d-flex align-items-center gap-3 mt-4">
                         <div class="api-select-wrapper flex-grow-1">
                             <select id="apiSelect" class="form-select api-select">
@@ -106,7 +108,8 @@
                         <button type="button" class="copy-btn" id="copyRequestBtn">Copy</button>
                     </div>
                     <div class="request-body">
-                        <pre id="curlCommand" class="curl-command"><span class="placeholder-text">API를 선택하면 요청 정보가 표시됩니다.</span></pre>
+                        <pre id="curlCommand"
+                            class="curl-command"><span class="placeholder-text">API를 선택하면 요청 정보가 표시됩니다.</span></pre>
                     </div>
                     <button type="button" class="run-btn" id="runBtn" disabled>RUN</button>
                 </div>
@@ -118,7 +121,8 @@
                         <span id="responseStatus" class="response-status"></span>
                     </div>
                     <div class="response-body">
-                        <pre id="responseContent" class="response-content"><span class="placeholder-text">RUN 버튼을 클릭하면 응답 결과가 표시됩니다.</span></pre>
+                        <pre id="responseContent"
+                            class="response-content"><span class="placeholder-text">RUN 버튼을 클릭하면 응답 결과가 표시됩니다.</span></pre>
                     </div>
                 </div>
             </div>
@@ -170,4 +174,5 @@
     <script src="js/config.js"></script>
     <script src="js/app.js"></script>
 </body>
+
 </html>

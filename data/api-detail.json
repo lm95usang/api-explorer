@@ -60,8 +60,24 @@
                         "name": "paymentMethod",
                         "type": "String",
                         "required": true,
-                        "description": "결제 수단 (CARD, BANK, PHONE)",
+                        "description": "결제 수단",
+                        "enum": [
+                            {"code": "CARD", "label": "신용카드"},
+                            {"code": "BANK", "label": "계좌이체"},
+                            {"code": "PHONE", "label": "휴대폰결제"}
+                        ],
                         "defaultValue": "CARD"
+                    },
+                    {
+                        "name": "usePoint",
+                        "type": "String",
+                        "required": false,
+                        "description": "포인트 사용 여부",
+                        "enum": [
+                            {"code": "0", "label": "미사용"},
+                            {"code": "1", "label": "사용"}
+                        ],
+                        "defaultValue": "0"
                     }
                 ]
             },
@@ -128,6 +144,17 @@
                         "description": "취소 사유",
                         "maxLength": 500,
                         "defaultValue": "고객 요청"
+                    },
+                    {
+                        "name": "cancelType",
+                        "type": "String",
+                        "required": true,
+                        "description": "취소 유형",
+                        "enum": [
+                            {"code": "01", "label": "전체취소"},
+                            {"code": "02", "label": "부분취소"}
+                        ],
+                        "defaultValue": "01"
                     }
                 ]
             }
@@ -151,16 +178,24 @@
         "queryParameters": [
             {
                 "name": "includeDetails",
-                "type": "Boolean",
+                "type": "String",
                 "required": false,
                 "description": "상세 정보 포함 여부",
-                "defaultValue": "true"
+                "enum": [
+                    {"code": "Y", "label": "포함"},
+                    {"code": "N", "label": "미포함"}
+                ],
+                "defaultValue": "Y"
             },
             {
                 "name": "format",
                 "type": "String",
                 "required": false,
-                "description": "응답 형식 (json, xml)",
+                "description": "응답 형식",
+                "enum": [
+                    {"code": "json", "label": "JSON"},
+                    {"code": "xml", "label": "XML"}
+                ],
                 "defaultValue": "json"
             }
         ],
@@ -244,8 +279,23 @@
                         "name": "billingCycle",
                         "type": "String",
                         "required": true,
-                        "description": "결제 주기 (MONTHLY, YEARLY)",
+                        "description": "결제 주기",
+                        "enum": [
+                            {"code": "MONTHLY", "label": "월간"},
+                            {"code": "YEARLY", "label": "연간"}
+                        ],
                         "defaultValue": "MONTHLY"
+                    },
+                    {
+                        "name": "autoRenewal",
+                        "type": "String",
+                        "required": false,
+                        "description": "자동 갱신 여부",
+                        "enum": [
+                            {"code": "0", "label": "수동갱신"},
+                            {"code": "1", "label": "자동갱신"}
+                        ],
+                        "defaultValue": "1"
                     }
                 ]
             }
@@ -281,6 +331,17 @@
                         "description": "해지 사유",
                         "maxLength": 500,
                         "defaultValue": "고객 요청"
+                    },
+                    {
+                        "name": "immediateCancel",
+                        "type": "String",
+                        "required": false,
+                        "description": "즉시 해지 여부",
+                        "enum": [
+                            {"code": "0", "label": "기간만료 후 해지"},
+                            {"code": "1", "label": "즉시 해지"}
+                        ],
+                        "defaultValue": "0"
                     }
                 ]
             }
@@ -391,7 +452,13 @@
                         "name": "method",
                         "type": "String",
                         "required": true,
-                        "description": "결제 수단 (CARD, BANK, PHONE, POINT)",
+                        "description": "결제 수단",
+                        "enum": [
+                            {"code": "CARD", "label": "신용카드"},
+                            {"code": "BANK", "label": "계좌이체"},
+                            {"code": "PHONE", "label": "휴대폰결제"},
+                            {"code": "POINT", "label": "포인트"}
+                        ],
                         "defaultValue": "CARD"
                     },
                     {

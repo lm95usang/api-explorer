@@ -232,6 +232,23 @@ body {
     margin-left: 8px;
 }
 
+.param-enum {
+    font-size: 11px;
+    color: #667eea;
+    margin-left: 8px;
+    padding: 2px 6px;
+    background-color: #f0f4ff;
+    border-radius: 4px;
+    font-family: 'SF Mono', Monaco, Consolas, monospace;
+}
+
+.param-description {
+    font-size: 12px;
+    color: #888;
+    margin-left: 12px;
+    font-weight: 400;
+}
+
 .param-input-wrapper {
     position: relative;
     display: flex;
@@ -291,6 +308,12 @@ body {
     color: #666;
     margin-bottom: 12px;
     display: block;
+}
+
+/* Object Parameters */
+.object-children-container {
+    margin: 10px 0;
+    padding-left: 16px;
 }
 
 /* Array Parameters */
@@ -652,7 +675,7 @@ body {
 
 .request-body {
     padding: 20px;
-    max-height: 300px;
+    max-height: 450px;
     overflow-y: auto;
 }
 
@@ -908,7 +931,7 @@ body {
 
 .header-info-description {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 10px;
     padding: 14px 16px;
     background-color: #e8f4ff;
@@ -920,7 +943,6 @@ body {
 .header-info-description i {
     color: #0066ff;
     font-size: 16px;
-    margin-top: 2px;
     flex-shrink: 0;
 }
 
