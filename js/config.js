@@ -64,67 +64,9 @@ function loadRicConfig() {
             },
             error: function(xhr, status, error) {
                 console.error('RIC 설정 로드 실패:', error);
-                // 폴백: 기본 설정 사용
-                CONFIG.RIC = getDefaultRicConfig();
-                DEFAULT_HEADERS = {};
-                Object.keys(CONFIG.RIC).forEach(ricCode => {
-                    DEFAULT_HEADERS[ricCode] = JSON.parse(JSON.stringify(CONFIG.RIC[ricCode].headers));
-                });
+                alert('RIC 설정을 불러오는데 실패했습니다.');
                 resolve(null);
             }
         });
     });
-}
-
-/**
- * 기본 RIC 설정 (폴백용)
- */
-function getDefaultRicConfig() {
-    return {
-        KIC: {
-            name: 'KIC',
-            baseUrl: 'http://localhost:8080',
-            headers: {
-                'x-division-code': 'KM',
-                'x-country-code': 'KR',
-                'x-store-id': 'SVC5013',
-                'x-ric-code': 'KIC',
-                'x-channel-code': 'EBP-soapUI',
-                'x-hash-code': 'e47e535109dc4a069de4fa555b624417',
-                'x-acess-key': '6ac50011af5d491898c7463013c7956d',
-                'Content-Type': 'application/json; charset=utf-8',
-                'Accept': 'application/json'
-            }
-        },
-        AIC: {
-            name: 'AIC',
-            baseUrl: 'http://localhost:8080',
-            headers: {
-                'x-division-code': 'AM',
-                'x-country-code': 'US',
-                'x-store-id': 'SVC5014',
-                'x-ric-code': 'AIC',
-                'x-channel-code': 'EBP-soapUI',
-                'x-hash-code': 'a12b345678cd9e012fg3h456i789j012',
-                'x-acess-key': '7bd61122bg6e502909d8574124d8067e',
-                'Content-Type': 'application/json; charset=utf-8',
-                'Accept': 'application/json'
-            }
-        },
-        EIC: {
-            name: 'EIC',
-            baseUrl: 'http://localhost:8080',
-            headers: {
-                'x-division-code': 'EM',
-                'x-country-code': 'GB',
-                'x-store-id': 'SVC5015',
-                'x-ric-code': 'EIC',
-                'x-channel-code': 'EBP-soapUI',
-                'x-hash-code': 'b23c456789de0f123gh4i567j890k123',
-                'x-acess-key': '8ce72233ch7f613010e9685235e9178f',
-                'Content-Type': 'application/json; charset=utf-8',
-                'Accept': 'application/json'
-            }
-        }
-    };
 }
