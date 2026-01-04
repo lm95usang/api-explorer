@@ -569,6 +569,26 @@ function updateCodeEditor() {
 function buildRequestBodyFromForm() {
     const result = {};
 
+    // 최상위 레벨 단순 파라미터 처리 (object, array가 아닌 것들)
+    $('#parameterForm > .param-group > .param-input-wrapper > .param-input[data-parent="body"]').each(function() {
+        const $input = $(this);
+        const name = $input.attr('name');
+        const type = $input.attr('data-type');
+        let value = $input.val();
+
+        // 빈 값 처리
+        if (value === '') return;
+
+        // 타입 변환
+        if (type === 'Number') {
+            value = Number(value);
+        } else if (type === 'Boolean') {
+            value = value.toLowerCase() === 'true';
+        }
+
+        result[name] = value;
+    });
+
     // 객체 컨테이너 처리
     $('.object-children-container').each(function() {
         const $container = $(this);
@@ -764,6 +784,16 @@ function onViewToggle() {
 function syncCodeToForm() {
     try {
         const jsonData = JSON.parse($('#codeEditor').val());
+
+        // 최상위 레벨 단순 파라미터 동기화
+        $('#parameterForm > .param-group > .param-input-wrapper > .param-input[data-parent="body"]').each(function() {
+            const $input = $(this);
+            const name = $input.attr('name');
+
+            if (jsonData[name] !== undefined && jsonData[name] !== null) {
+                $input.val(jsonData[name].toString());
+            }
+        });
 
         // 객체 컨테이너 내 입력 필드에 값 설정
         $('.object-children-container').each(function() {

@@ -39,6 +39,11 @@
             "id": "EBP_API_401",
             "name": "복합 결제 요청",
             "category": "복합결제"
+        },
+        {
+            "id": "EBP_API_402",
+            "name": "복합 결제 요청2",
+            "category": "복합결제"
         }
     ]
 }
