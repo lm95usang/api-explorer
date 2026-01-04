@@ -294,12 +294,38 @@ body {
     font-size: 18px;
 }
 
-/* Nested Parameters */
+/* Nested Parameters - Card Style */
 .nested-params {
-    margin-left: 20px;
-    padding-left: 20px;
-    border-left: 2px solid #e0e0e0;
-    margin-top: 10px;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    padding: 16px;
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+}
+
+.nested-params > .param-label-wrapper {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.nested-params > .param-label-wrapper .param-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.nested-params > .param-label-wrapper .param-type {
+    font-size: 12px;
+    padding: 2px 8px;
+    background-color: #e3f2fd;
+    border-radius: 4px;
+    color: #1565c0;
+}
+
+.nested-params .object-children-container .param-input {
+    background-color: #ffffff;
 }
 
 .nested-label {
@@ -312,8 +338,8 @@ body {
 
 /* Object Parameters */
 .object-children-container {
-    margin: 10px 0;
-    padding-left: 16px;
+    margin: 0;
+    padding: 0;
 }
 
 /* Array Parameters */
@@ -322,11 +348,11 @@ body {
 }
 
 .array-items-container {
-    margin: 10px 0;
+    margin: 0;
 }
 
 .array-item {
-    background-color: #f8f9fa;
+    background-color: #ffffff;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     padding: 16px;
