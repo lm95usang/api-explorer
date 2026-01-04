@@ -1,7 +1,5 @@
 package com.example.apirouter.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
@@ -25,11 +23,9 @@ public class ApiRouterController {
     private static final Logger log = LoggerFactory.getLogger(ApiRouterController.class);
 
     private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
 
     public ApiRouterController() {
         this.restTemplate = new RestTemplate();
-        this.objectMapper = new ObjectMapper();
     }
 
     /**
@@ -39,7 +35,7 @@ public class ApiRouterController {
             String targetUrl,
             String method,
             Map<String, String> headers,
-            JsonNode body
+            String body
     ) {}
 
     /**
@@ -76,16 +72,10 @@ public class ApiRouterController {
                 });
             }
 
-            // 요청 바디 설정
-            String bodyJson = null;
-            if (request.body() != null && !request.body().isNull()) {
-                bodyJson = objectMapper.writeValueAsString(request.body());
-            }
-
             // HTTP 요청 엔티티 생성
-            HttpEntity<String> httpEntity = new HttpEntity<>(bodyJson, httpHeaders);
+            HttpEntity<String> httpEntity = new HttpEntity<>(request.body(), httpHeaders);
 
-            log.debug("대상 서버 요청 - Headers: {}, Body: {}", httpHeaders, bodyJson);
+            log.debug("대상 서버 요청 - Headers: {}, Body: {}", httpHeaders, request.body());
 
             // 대상 서버로 요청 전송
             ResponseEntity<String> response = restTemplate.exchange(

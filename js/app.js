@@ -175,6 +175,7 @@ function loadApiDetail(apiId) {
         url: CONFIG.apiDetailEndpoint,
         method: 'GET',
         dataType: 'json',
+        data: { ric: currentRic },
         success: function(data) {
             hideLoading();
             const apiData = data[apiId];
@@ -1036,7 +1037,7 @@ function executeApi() {
         targetUrl: fullUrl,
         method: currentApi.method,
         headers: ricConfig.headers,
-        body: bodyData
+        body: JSON.stringify(bodyData)
     };
 
     $.ajax({
